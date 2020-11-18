@@ -44,10 +44,10 @@ char	*ft_strncpy(char *s, int n)
 	char	*new;
 	int		i;
 
-	i = 0;
 	if (!(new = malloc(sizeof(char) * n + 1)))
 		return (NULL);
-	while (s[i] && i < n)
+	i = 0;
+	while (s[i] && (i < n))
 	{
 		new[i] = s[i];
 		i++;
