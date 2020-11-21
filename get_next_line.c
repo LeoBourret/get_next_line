@@ -14,11 +14,6 @@ void	fill_line(char **file_content, char **line)
 		tmp = ft_strdup(&(*file_content)[len + 1]);
 		free(*file_content);
 		*file_content = tmp;
-		if ((*file_content)[0] == '\0')
-		{
-			*file_content = NULL;
-			free(*file_content);
-		}
 	}
 	else
 	{
@@ -33,10 +28,15 @@ int		manage_return(char **file_content, char **line, int ret)
 	if (ret < 0)
 		return (-1);
 	else if (ret == 0 && *file_content == NULL)
+	{
+		*line = ft_strdup("");
 		return (0);
+	}
 	else
 	{
 		fill_line(&(*file_content), line);
+		if (*file_content == NULL)
+			return (0);
 		return (1);
 	}
 }
@@ -48,7 +48,7 @@ int		get_next_line(int fd, char **line)
 	char		*tmp;
 	int			ret;
 
-	if (fd < 0 || !line)
+	if (fd < 0 || !line || BUFFER_SIZE <= 0)
 		return (-1);
 	if (!(buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1))))
 		return (-1);
@@ -66,5 +66,6 @@ int		get_next_line(int fd, char **line)
 		if (ft_strchr(file_content, '\n'))
 			break ;
 	}
+	free(buffer);
 	return (manage_return(&file_content, line, ret));
 }

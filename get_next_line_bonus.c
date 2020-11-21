@@ -1,6 +1,6 @@
 #include "get_next_line.h"
 
-void	ft_memdel(void **file_content)
+void	dell_content(char **file_content)
 {
 	if (file_content != NULL)
 	{
@@ -9,33 +9,25 @@ void	ft_memdel(void **file_content)
 	}
 }
 
-void	ft_strdel(char **file_content)
-{
-	if (file_content != NULL && *file_content != NULL)
-		ft_memdel((void**)file_content);
-}
-
 void	fill_line(char **file_content, char **line)
 {
 	int		len;
 	char	*tmp;
 
 	len = 0;
+	tmp = *file_content;
 	while ((*file_content)[len] && (*file_content)[len] != '\n')
 		len++;
 	if ((*file_content)[len] == '\n')
 	{
 		*line = ft_strncpy(*file_content, len);
-		tmp = ft_strdup(&(*file_content)[len + 1]);
-		free(*file_content);
-		*file_content = tmp;
-		if ((*file_content)[0] == '\0')
-			ft_strdel(file_content);
+		*file_content = ft_strdup(ft_strchr(tmp, '\n') + 1);
+		free(tmp);
 	}
 	else
 	{
 		*line = ft_strdup(*file_content);
-		ft_strdel(file_content);
+		dell_content(file_content);
 	}
 }
 
@@ -43,11 +35,16 @@ int		manage_return(char **file_content, char **line, int ret, int fd)
 {
 	if (ret < 0)
 		return (-1);
-	else if (ret == 0 && file_content[fd] == NULL)
+	else if (ret == 0 && !file_content[fd])
+	{
+		*line = ft_strdup("");
 		return (0);
+	}
 	else
 	{
 		fill_line(&file_content[fd], line);
+		if (file_content[fd] == NULL)
+			return (0);
 		return (1);
 	}
 }
@@ -65,7 +62,7 @@ int		get_next_line(int fd, char **line)
 		return (-1);
 	while ((ret = read(fd, buffer, BUFFER_SIZE)) > 0)
 	{
-		buffer[ret] = 0;
+		buffer[ret] = '\0';
 		if (file_content[fd] == NULL)
 			file_content[fd] = ft_strdup(buffer);
 		else
@@ -77,5 +74,6 @@ int		get_next_line(int fd, char **line)
 		if (ft_strchr(file_content[fd], '\n'))
 			break ;
 	}
+	free(buffer);
 	return (manage_return(file_content, line, ret, fd));
 }
