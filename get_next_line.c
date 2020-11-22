@@ -18,8 +18,8 @@ void	fill_line(char **file_content, char **line)
 	else
 	{
 		*line = ft_strdup(*file_content);
-		*file_content = NULL;
 		free(*file_content);
+		*file_content = NULL;
 	}
 }
 
