@@ -6,7 +6,7 @@
 /*   By: lebourre <lebourre@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 18:21:42 by lebourre          #+#    #+#             */
-/*   Updated: 2020/11/23 16:13:43 by lebourre         ###   ########.fr       */
+/*   Updated: 2020/11/24 02:15:24 by lebourre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,9 @@ int		fill_line(char **file_content, char **line)
 	return (1);
 }
 
-int		manage_return(char **file_content, char **line, int ret)
+int		manage_return(char **file_content, char **line, int ret, char *buffer)
 {
+	free(buffer);
 	if (ret < 0)
 		return (-1);
 	else if (ret == 0 && *file_content == NULL)
@@ -68,7 +69,8 @@ int		get_next_line(int fd, char **line)
 	char		*tmp;
 	int			ret;
 
-	if (!(buff = malloc(sizeof(char) * (BUFFER_SIZE + 1))) || fd < 0 || !line)
+	if (!(buff = malloc(sizeof(char) * (BUFFER_SIZE + 1)))
+	|| fd < 0 || !line || BUFFER_SIZE <= 0)
 		return (-1);
 	while ((ret = read(fd, buff, BUFFER_SIZE)) > 0)
 	{
@@ -86,6 +88,5 @@ int		get_next_line(int fd, char **line)
 		if (ft_strchr(file_content, '\n'))
 			break ;
 	}
-	free(buff);
-	return (manage_return(&file_content, line, ret));
+	return (manage_return(&file_content, line, ret, buff));
 }
